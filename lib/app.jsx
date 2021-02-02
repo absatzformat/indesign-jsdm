@@ -84,7 +84,6 @@ JSDM.App = (function () {
 		this.ui.find('file_path').text = file.fsName;
 	};
 
-	// TODO: maybe read file line by line and process json on the fly with oboe.js
 	jsdm.prototype.processSelectedFile = function () {
 
 		// clear view
@@ -93,8 +92,6 @@ JSDM.App = (function () {
 		if (this.selectedFile && this.selectedFile.exists) {
 
 			var file = this.selectedFile;
-
-			// TODO: read file line by line and update progressbar
 
 			file.open('r');
 			file.seek(0);
