@@ -22,6 +22,10 @@ JSDM.App = (function () {
 	var jsdm = function () {
 
 		this.ui = new JSDM.Ui();
+
+		this.progressBar = this.ui.find('progressbar');
+		this.dataView = this.ui.find('data_view');
+
 		this.selectedFile = null;
 		this.selectedData = null;
 		this.data = null;
@@ -84,7 +88,7 @@ JSDM.App = (function () {
 	jsdm.prototype.processSelectedFile = function () {
 
 		// clear view
-		this.ui.find('data_view').removeAll();
+		this.dataView.removeAll();
 
 		if (this.selectedFile && this.selectedFile.exists) {
 
@@ -107,18 +111,27 @@ JSDM.App = (function () {
 
 	jsdm.prototype.updateDataView = function () {
 
-		var view = this.ui.find('data_view');
 		var data = this.data;
 		var name = this.selectedFile.name;
 
-		this.mapObjectToNode(data, view, name);
+		// some random step, so we can see something
+		var step = this.selectedFile.length ? (2000 / this.selectedFile.length) : 0;
 
-		if (view.items.length) {
-			view.items[0].expanded = true;
+		this.mapObjectToNode(data, this.dataView, name, step);
+
+		this.progressBar.value = 100;
+
+		if (this.dataView.items.length) {
+			this.dataView.items[0].expanded = true;
 		}
+
+		this.progressBar.value = 0;
 	};
 
-	jsdm.prototype.mapObjectToNode = function (object, node, name) {
+	jsdm.prototype.mapObjectToNode = function (object, node, name, step) {
+
+		this.progressBar.value += step;
+		// this.ui.update();
 
 		var type = typeOf(object);
 
@@ -131,12 +144,12 @@ JSDM.App = (function () {
 
 			if (isArray) {
 				for (var i = 0; i < object.length; i++) {
-					this.mapObjectToNode(object[i], subNode, '' + i);
+					this.mapObjectToNode(object[i], subNode, '' + i, step);
 				}
 			}
 			else {
 				for (var key in object) {
-					this.mapObjectToNode(object[key], subNode, key);
+					this.mapObjectToNode(object[key], subNode, key, step);
 				}
 			}
 		}
@@ -152,8 +165,7 @@ JSDM.App = (function () {
 
 	jsdm.prototype.startDataMapping = function () {
 
-		var view = this.ui.find('data_view');
-		var selectedItem = view.selection;
+		var selectedItem = this.dataView.selection;
 
 		if (selectedItem && hasProperty(selectedItem, 'dataRef')) {
 
@@ -163,6 +175,7 @@ JSDM.App = (function () {
 					this.doDataMapping(selectedItem.dataRef);
 				}
 				catch (e) {
+					// TODO: log error
 					alert(e.toString() + ', ' + e.line, _('Error'));
 				}
 			}.bind(this), ScriptLanguage.JAVASCRIPT, undefined, UndoModes.ENTIRE_SCRIPT, _('Data mapping'));
@@ -175,7 +188,6 @@ JSDM.App = (function () {
 			data = [data];
 		}
 
-		var progressBar = this.ui.find('progressbar');
 		var step = 100 / data.length;
 
 		// app.activeDocument.documentPreferences.allowPageShuffle
@@ -209,15 +221,16 @@ JSDM.App = (function () {
 
 			currentSpread = newSpread;
 
-			progressBar.value = (i + 1) * step;
+			this.progressBar.value = (i + 1) * step;
+			// this.ui.update();
 		}
 
 		// remove template page if desired
-		if (false) {
-			templatePage.remove();
+		if (this.ui.find('delete_template_checkbox').value) {
+			templateSpread.remove();
 		}
 
-		progressBar.value = 0;
+		this.progressBar.value = 0;
 	};
 
 	jsdm.prototype.mapDataToPage = function (page, data) {
@@ -248,7 +261,12 @@ JSDM.App = (function () {
 							case 'Oval':
 								var file = this.resolveFile(value, this.selectedFile);
 								if (file && file.exists) {
-									pageItem.place(file);
+									try {
+										pageItem.place(file);
+									}
+									catch (e) {
+										// TODO: log error
+									}
 								}
 								break;
 						}
