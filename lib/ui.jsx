@@ -4,27 +4,63 @@ JSDM.Ui = (function () {
 
 	var ui = function () {
 
-		this.window = new Window('palette', _('{ JSON } Data Mapper'));
+		this.window = new Window('palette', _('{ JSON } Data Mapper'), undefined, { borderless: false });
 		// this.window.bounds = [100, 100, 480, 490];
 		// this.window.size = [400, undefined];
 		this.window.preferredSize = [360, 400];
+		this.window.margins = 0;
 		// this.window.opacity = 0.9;
 		this.window.alignChildren = 'fill';
 
+		this.mainGroup = this.addMainGroup(this.window);
+		this.addProgressbar(this.mainGroup);
+		this.addFilePanel(this.mainGroup);
+		this.addDataPanel(this.mainGroup);
+		this.addOptionsPanel(this.mainGroup);
+		this.addStartButton(this.mainGroup);
 
-		var mainGroup = this.addMainGroup(this.window);
-		this.addProgressbar(mainGroup);
-		this.addFilePanel(mainGroup);
-		this.addDataPanel(mainGroup);
-		this.addOptionsPanel(mainGroup);
-		this.addStartButton(mainGroup);
+		// this.window.addEventListener('mousedown', this.onWindowMousedown.bind(this));
 	};
+
+	// ui.prototype.onWindowMousedown = function (e) {
+
+	// 	e.preventDefault();
+
+	// 	if(e.target === this.mainGroup){
+	// 		this.windowDragStart(e);
+	// 	}
+	// };
+
+	// ui.prototype.windowDragStart = function (ev) {
+
+	// 	var x = ev.clientX;
+	// 	var y = ev.clientY;
+
+	// 	var mousemove = function(e){
+
+	// 		var deltaX = e.clientX - x;
+	// 		var deltaY = e.clientY - y;
+
+	// 		this.window.frameLocation.x += deltaX;
+	// 		this.window.frameLocation.y += deltaY;
+
+	// 	}.bind(this);
+
+	// 	var mouseup = function(){
+	// 		this.window.removeEventListener('mousemove', mousemove);
+	// 		this.window.removeEventListener('mouseup', mouseup);
+	// 	}.bind(this);
+
+	// 	this.window.addEventListener('mousemove', mousemove);
+	// 	this.window.addEventListener('mouseup', mouseup);
+	// };
 
 	ui.prototype.addMainGroup = function (parent) {
 
 		var group = parent.add('group', undefined, { name: 'main_group' });
 		group.orientation = 'column';
 		group.alignChildren = 'fill';
+		group.margins = 12;
 
 		return group;
 	};
@@ -38,7 +74,6 @@ JSDM.Ui = (function () {
 	};
 
 	ui.prototype.addFilePanel = function (parent) {
-
 
 		var panel = parent.add('panel', undefined, _('File'));
 		panel.alignChildren = 'fill';
@@ -68,8 +103,9 @@ JSDM.Ui = (function () {
 	ui.prototype.addOptionsPanel = function (parent) {
 
 		var panel = parent.add('panel', undefined, _('Options'));
+		panel.alignChildren = 'left';
 
-		panel.add('checkbox');
+		panel.add('checkbox', undefined, _('checkbox_template_delete'), { name: 'delete_template_checkbox' });
 
 		return panel;
 	};
@@ -93,6 +129,12 @@ JSDM.Ui = (function () {
 
 	ui.prototype.hide = function () {
 		this.window.hide();
+	};
+
+	ui.prototype.update = function () {
+		if (this.window.visible) {
+			this.window.update();
+		}
 	};
 
 	return ui;
