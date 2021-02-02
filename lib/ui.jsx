@@ -4,10 +4,10 @@ JSDM.Ui = (function () {
 
 	var ui = function () {
 
-		this.window = new Window('palette', _('JSON Data Mapper'));
+		this.window = new Window('palette', _('{ JSON } Data Mapper'));
 		// this.window.bounds = [100, 100, 480, 490];
-		// this.window.size = [300, 400];
-		this.window.preferredSize = [360, 100];
+		// this.window.size = [400, undefined];
+		this.window.preferredSize = [360, 400];
 		// this.window.opacity = 0.9;
 		this.window.alignChildren = 'fill';
 
@@ -16,7 +16,7 @@ JSDM.Ui = (function () {
 		this.addProgressbar(mainGroup);
 		this.addFilePanel(mainGroup);
 		this.addDataPanel(mainGroup);
-
+		this.addOptionsPanel(mainGroup);
 		this.addStartButton(mainGroup);
 	};
 
@@ -40,14 +40,10 @@ JSDM.Ui = (function () {
 	ui.prototype.addFilePanel = function (parent) {
 
 
-		var panel = parent.add('group');
-		panel.orientation = 'column';
+		var panel = parent.add('panel', undefined, _('File'));
 		panel.alignChildren = 'fill';
 
-		panel.add('statictext', undefined, _('File'));
-		panel.add('panel');
-
-		panel.add('edittext', undefined, _('No file selected'), { name: 'file_path', readonly: true });
+		panel.add('edittext', undefined, undefined, { name: 'file_path', readonly: true });
 
 		var buttonGroup = panel.add('group');
 		buttonGroup.alignChildren = ['fill', 'center'];
@@ -60,23 +56,25 @@ JSDM.Ui = (function () {
 
 	ui.prototype.addDataPanel = function (parent) {
 
-		var panel = parent.add('group');
-		panel.orientation = 'column';
+		var panel = parent.add('panel', undefined, _('Data'));
 		panel.alignChildren = 'fill';
 
-		panel.add('statictext', undefined, _('Data'));
-		panel.add('panel');
-
-		var view = panel.add('treeview', [undefined, undefined, undefined, 300], undefined, { name: 'data_view' });
-		view.indent = 60;
+		var view = panel.add('treeview', [undefined, undefined, undefined, 260], undefined, { name: 'data_view' });
 		view.itemSize = [undefined, 24];
 
 		return panel;
 	};
 
-	ui.prototype.addStartButton = function (parent) {
+	ui.prototype.addOptionsPanel = function (parent) {
 
-		parent.add('panel');
+		var panel = parent.add('panel', undefined, _('Options'));
+
+		panel.add('checkbox');
+
+		return panel;
+	};
+
+	ui.prototype.addStartButton = function (parent) {
 
 		var button = parent.add('button', undefined, _('Start mapping'), { name: 'start_button' });
 		button.size = [undefined, 40];

@@ -19,6 +19,7 @@ JSDM.i18n = (function (translation) {
 	'Open': { de: 'Öffnen' },
 	'Reload': { de: 'Aktualisieren' },
 	'Select file': { de: 'Datei auswählen' },
-	'Nothing selected': { de: 'Keine ausgewählt' },
-	'Data': { de: 'Daten' }
+	'Data': { de: 'Daten' },
+	'Options': { de: 'Optionen' },
+	'Start mapping': { de: 'Mapping starten' }
 });

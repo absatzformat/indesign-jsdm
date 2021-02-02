@@ -8,9 +8,9 @@
 this.JSDM || (JSDM = {});
 
 //@include "lib/polyfills.js"
-//@include "lib/i18n.jsxinc"
-//@include "lib/ui.jsxinc"
-//@include "lib/app.jsxinc"
+//@include "lib/i18n.jsx"
+//@include "lib/ui.jsx"
+//@include "lib/app.jsx"
 
 // set to false in production
 if (true || !JSDM.instance) {
