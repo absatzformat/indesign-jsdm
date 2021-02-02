@@ -1,0 +1,248 @@
+JSDM.App = (function () {
+
+	var _ = JSDM.i18n;
+
+	var typeOf = function (obj) {
+		var str = Object.prototype.toString.call(obj);
+		return str.match(/\[object ([\w]+)\]/)[1];
+	};
+
+	var hasProperty = function (obj, key) {
+		return Object.prototype.hasOwnProperty.call(obj, key);
+	};
+
+	var jsdm = function () {
+
+		this.ui = new JSDM.Ui();
+		this.selectedFile = null;
+		this.selectedData = null;
+		this.data = null;
+	};
+
+	jsdm.prototype.init = function () {
+		this.initEvents();
+		this.ui.show();
+	};
+
+	jsdm.prototype.initEvents = function () {
+
+		this.ui.find('select_button').addEventListener('click', this.selectButtonClick.bind(this));
+		this.ui.find('reload_button').addEventListener('click', this.reloadButtonClick.bind(this));
+		this.ui.find('start_button').addEventListener('click', this.startButtonClick.bind(this));
+	};
+
+	jsdm.prototype.selectButtonClick = function () {
+
+		this.selectInputFile();
+	};
+
+	jsdm.prototype.reloadButtonClick = function () {
+
+		this.processSelectedFile();
+	};
+
+	jsdm.prototype.startButtonClick = function () {
+
+		this.startDataMapping();
+	};
+
+	jsdm.prototype.selectInputFile = function () {
+
+		var group = this.ui.find('main_group');
+
+		group.enabled = false;
+
+		var file = File.openDialog(_('Select file'), 'JSON:*.json');
+
+		group.enabled = true;
+
+		// TODO: check encoding
+		// file.isEncodingAvailable
+
+		if (file) {
+
+			this.selectedFile = file;
+			this.ui.find('file_path').text = file.fsName;
+
+			this.processSelectedFile();
+		}
+	};
+
+	// TODO: maybe read file line by line and process json on the fly with oboe.js
+	jsdm.prototype.processSelectedFile = function () {
+
+		// clear view
+		this.ui.find('data_view').removeAll();
+
+		if (!this.selectedFile) {
+			return;
+		}
+
+		var file = this.selectedFile;
+
+		// TODO: read file line by line and update progressbar
+
+		file.open('r');
+		file.seek(0);
+
+		var bytes = file.read();
+
+		file.close();
+
+		this.data = JSON.parse(bytes);
+
+		this.updateDataView();
+	};
+
+	jsdm.prototype.updateDataView = function () {
+
+		var view = this.ui.find('data_view');
+		var data = this.data;
+
+		this.mapObjectToNode(data, view);
+	};
+
+	jsdm.prototype.mapObjectToNode = function (object, node) {
+
+		var type = typeOf(object);
+
+		if (type === 'Object') {
+
+			for (var key in object) {
+
+				var subType = typeOf(object[key]);
+
+				if (subType === 'Object' || subType === 'Array') {
+					var newNode = node.add('node', key + ': ' + (subType === 'Object' ? '{ }' : '[ ]'));
+					newNode.dataRef = object[key];
+					this.mapObjectToNode(object[key], newNode);
+				}
+				else {
+					// var value = ('' + object[key]).substr(0, 12);
+					var item = node.add('item', key);
+					item.enabled = false;
+				}
+			}
+		}
+		else if (type === 'Array') {
+
+			for (var i = 0; i < object.length; i++) {
+
+				var sub = object[i];
+				var subType = typeOf(sub);
+
+				if (subType === 'Object' || subType === 'Array') {
+					var newNode = node.add('node', i + ': ' + (subType === 'Object' ? '{ }' : '[ ]'));
+					newNode.dataRef = sub;
+					this.mapObjectToNode(sub, newNode);
+				}
+				else {
+					// var value = ('' + sub).substr(0, 12);
+					var item = node.add('item', i);
+					item.enabled = false;
+				}
+			}
+		}
+	};
+
+	jsdm.prototype.startDataMapping = function () {
+
+		var view = this.ui.find('data_view');
+		var selectedItem = view.selection;
+
+		if (selectedItem && hasProperty(selectedItem, 'dataRef')) {
+			this.doDataMapping(selectedItem.dataRef);
+			// app.doScript(function () {
+				
+			// }.bind(this), ScriptLanguage.JAVASCRIPT, undefined, UndoModes.ENTIRE_SCRIPT, _('Data mapping'));
+		}
+	};
+
+	jsdm.prototype.doDataMapping = function (data) {
+
+		if (typeOf(data) !== 'Array') {
+			data = [data];
+		}
+
+		var progressBar = this.ui.find('progressbar');
+		var step = 100 / data.length;
+
+
+		// var pageToCopy = app.activeWindow.activePage;
+		var templatePage = app.activeWindow.activeSpread;
+		var currentPage = templatePage;
+
+		for (var i = 0; i < data.length; i++) {
+
+			var entry = data[i];
+
+			var newPage = templatePage.duplicate(LocationOptions.AFTER, currentPage);
+
+			var pageItems = newPage.allPageItems;
+
+			for (var j = 0; j < pageItems.length; j++) {
+
+				var pageItem = pageItems[j];
+				// get tags for items
+				var xmlItem = pageItem.associatedXMLElement;
+
+				if (xmlItem) {
+
+					var tagName = xmlItem.markupTag.name;
+
+					if (hasProperty(entry, tagName)) {
+
+						var itemType = pageItem.reflect.name;
+
+						switch (itemType) {
+							case 'TextFrame': // text
+								pageItem.contents = entry[tagName].toString();
+								break;
+							case 'Rectangle': // images
+							case 'Polygon':
+							case 'Oval':
+								var file = this.resolveFile(entry[tagName], this.selectedFile);
+								if(file){
+									pageItem.place(file);
+								}
+								break;
+						}
+					}
+				}
+			}
+
+			currentPage = newPage;
+
+			progressBar.value = (i + 1) * step;
+		}
+
+		// remove template page if desired
+		if (false) {
+			templatePage.remove();
+		}
+
+		progressBar.value = 0;
+	};
+
+	jsdm.prototype.resolveFile = function (path, referenceFile) {
+
+		// check absolute path
+		var file = new File(path);
+
+		if (!file.exists && referenceFile instanceof File) {
+
+			// check path relative to selected file
+			file.changePath(decodeURI(referenceFile.path));
+			file.changePath(path);
+		}
+
+		if(file.exists){
+			return file;
+		}
+
+		return null;
+	};
+
+	return jsdm;
+
+})();
