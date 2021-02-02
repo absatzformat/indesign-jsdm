@@ -1,4 +1,4 @@
-﻿// https://www.indesignjs.de/extendscriptAPI/indesign-latest
+// https://www.indesignjs.de/extendscriptAPI/indesign-latest
 // https://adobeindd.com/view/publications/a0207571-ff5b-4bbf-a540-07079bd21d75/92ra/publication-web-resources/pdf/scriptui-2-16-j.pdf
 
 //@target indesign
@@ -12,9 +12,14 @@ this.JSDM || (JSDM = {});
 //@include "lib/ui.jsx"
 //@include "lib/app.jsx"
 
-// set to false in production
-if (true || !JSDM.instance) {
-	JSDM.instance = new JSDM.App();
-}
+(function () {
+
+	var dir = decodeURI(File($.fileName).path);
+
+	if (File(dir + '/.dev').exists || !JSDM.instance) {
+		JSDM.instance = new JSDM.App();
+	}
+
+})();
 
 JSDM.instance.init();
