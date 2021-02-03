@@ -1,6 +1,6 @@
-JSDM.Ui = (function () {
+var Ui = (function () {
 
-	var _ = JSDM.i18n;
+	var _ = i18n;
 
 	var ui = function () {
 
@@ -18,42 +18,7 @@ JSDM.Ui = (function () {
 		this.addDataPanel(this.mainGroup);
 		this.addOptionsPanel(this.mainGroup);
 		this.addStartButton(this.mainGroup);
-
-		// this.window.addEventListener('mousedown', this.onWindowMousedown.bind(this));
 	};
-
-	// ui.prototype.onWindowMousedown = function (e) {
-
-	// 	e.preventDefault();
-
-	// 	if(e.target === this.mainGroup){
-	// 		this.windowDragStart(e);
-	// 	}
-	// };
-
-	// ui.prototype.windowDragStart = function (ev) {
-
-	// 	var x = ev.clientX;
-	// 	var y = ev.clientY;
-
-	// 	var mousemove = function(e){
-
-	// 		var deltaX = e.clientX - x;
-	// 		var deltaY = e.clientY - y;
-
-	// 		this.window.frameLocation.x += deltaX;
-	// 		this.window.frameLocation.y += deltaY;
-
-	// 	}.bind(this);
-
-	// 	var mouseup = function(){
-	// 		this.window.removeEventListener('mousemove', mousemove);
-	// 		this.window.removeEventListener('mouseup', mouseup);
-	// 	}.bind(this);
-
-	// 	this.window.addEventListener('mousemove', mousemove);
-	// 	this.window.addEventListener('mouseup', mouseup);
-	// };
 
 	ui.prototype.addMainGroup = function (parent) {
 

@@ -5,21 +5,20 @@
 //@targetengine jsdm
 //@strict on
 
-this.JSDM || (JSDM = {});
-
 //@include "lib/polyfills.js"
-//@include "lib/i18n.jsx"
-//@include "lib/ui.jsx"
-//@include "lib/app.jsx"
 
-(function () {
+(function (context) {
+
+	//@include "lib/i18n.jsx"
+	//@include "lib/ui.jsx"
+	//@include "lib/app.jsx"
 
 	var dir = decodeURI(File($.fileName).path);
 
-	if (File(dir + '/.dev').exists || !JSDM.instance) {
-		JSDM.instance = new JSDM.App();
+	if (File(dir + '/.dev').exists || !context.JSDM) {
+		context.JSDM = new App();
 	}
 
-})();
+	context.JSDM.init();
 
-JSDM.instance.init();
+})(this);

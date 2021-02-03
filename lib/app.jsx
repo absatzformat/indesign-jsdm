@@ -1,6 +1,6 @@
-JSDM.App = (function () {
+var App = (function () {
 
-	var _ = JSDM.i18n;
+	var _ = i18n;
 
 	/** ! returns global for undefined and null */
 	var typeOf = function (obj) {
@@ -21,7 +21,7 @@ JSDM.App = (function () {
 
 	var jsdm = function () {
 
-		this.ui = new JSDM.Ui();
+		this.ui = new Ui();
 
 		this.progressBar = this.ui.find('progressbar');
 		this.dataView = this.ui.find('data_view');

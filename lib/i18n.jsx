@@ -1,4 +1,4 @@
-JSDM.i18n = (function (translation) {
+var i18n = (function (translation) {
 
 	return function () {
 
