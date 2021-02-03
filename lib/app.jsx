@@ -185,17 +185,21 @@ JSDM.App = (function () {
 			data = [data];
 		}
 
-		var step = 100 / data.length;
+		var step = data.length ? (100 / data.length) : 100;
 
 		// app.activeDocument.documentPreferences.allowPageShuffle
 		// app.activeDocument.documentPreferences.facingPages
 
 		// var templatePage = app.activeWindow.activePage;
-		var templateSpread = app.activeWindow.activeSpread;
+		
 		// var templatePage = app.activeDocument.spreads[0];
 		// var xmlTags = app.activeDocument.xmlTags;
 
-		// check spread
+		var templateSpread = app.activeWindow.activeSpread;
+		if(templateSpread instanceof MasterSpread){
+			return;
+		}
+
 		// TODO: verify what to do if spread is incomplete
 
 		if (
