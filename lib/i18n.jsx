@@ -22,5 +22,6 @@ JSDM.i18n = (function (translation) {
 	'Data': { de: 'Daten' },
 	'Options': { de: 'Optionen' },
 	'Start mapping': { de: 'Mapping starten' },
+	'Error': { de: 'Fehler' },
 	'checkbox_template_delete': { en: 'Delete selected spread after mapping', de: 'Ausgewählten Druckbogen nach Mapping löschen' }
 });
