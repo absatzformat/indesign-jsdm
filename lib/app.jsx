@@ -259,30 +259,58 @@ var App = (function () {
 				if (xmlItem && xmlItem.isValid) {
 
 					var tagName = xmlItem.markupTag.name;
-					var value = getObjectValue(data, tagName);
 
-					if (value !== undefined) {
+					var dataValue = getObjectValue(data, tagName);
 
-						switch (pageItem.reflect.name) {
-							case 'TextFrame': // text
-								pageItem.contents = value.toString();
-								break;
-							case 'Rectangle': // images
-							case 'Polygon':
-							case 'Oval':
-								var file = this.resolveFile(value, this.selectedFile);
-								if (file && file.exists) {
-									try {
-										pageItem.place(file);
-									}
-									catch (e) {
-										// TODO: log error
-									}
+					switch (pageItem.reflect.name) {
+
+						case 'TextFrame': // text
+							var stringArray = this.getStringArray(dataValue);
+							pageItem.contents = stringArray.join(', ');
+							break;
+						case 'Rectangle': // images
+						case 'Polygon':
+						case 'Oval':
+							var stringArray = this.getStringArray(dataValue);
+							if (stringArray.length) {
+								var file = this.resolveFile(stringArray[0], this.selectedFile);
+								if (file) {
+									this.tryPlaceFile(pageItem, file);
 								}
-								break;
-						}
+							}
+							break;
 					}
 				}
+			}
+		}
+	};
+
+	jsdm.prototype.getStringArray = function (object) {
+
+		var strings = [];
+		var type = typeOf(object);
+
+		if (type === 'string') {
+			strings.push(object);
+		}
+		else if (type === 'array') {
+			for (var i = 0; i < object.length; i++) {
+				if (typeOf(object[i]) === 'string') {
+					strings.push(object[i]);
+				}
+			}
+		}
+
+		return strings;
+	};
+
+	jsdm.prototype.tryPlaceFile = function (pageItem, file) {
+		if (pageItem.isValid && file.exists) {
+			try {
+				pageItem.place(file);
+			}
+			catch (err) {
+				this.handleError(err);
 			}
 		}
 	};
