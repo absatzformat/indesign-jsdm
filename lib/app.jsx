@@ -84,6 +84,12 @@ var App = (function () {
 		this.ui.find('file_path').text = file.fsName;
 	};
 
+	jsdm.prototype.handleError = function (error) {
+
+		// alert(JSON.stringify(error));
+		alert(error.toString(), _('Error'));
+	};
+
 	jsdm.prototype.processSelectedFile = function () {
 
 		// clear view
@@ -100,9 +106,14 @@ var App = (function () {
 
 			file.close();
 
-			this.data = JSON.parse(bytes);
-
-			this.updateDataView();
+			try {
+				this.data = JSON.parse(bytes);
+				this.updateDataView();
+			}
+			catch (err) {
+				this.data = null;
+				this.handleError(err);
+			}
 		}
 	};
 
@@ -171,9 +182,8 @@ var App = (function () {
 				try {
 					this.doDataMapping(selectedItem.dataRef);
 				}
-				catch (e) {
-					// TODO: log error
-					alert(e.toString() + ', ' + e.line, _('Error'));
+				catch (err) {
+					this.handleError(err);
 				}
 			}.bind(this), ScriptLanguage.JAVASCRIPT, undefined, UndoModes.ENTIRE_SCRIPT, _('Data mapping'));
 		}
@@ -191,12 +201,12 @@ var App = (function () {
 		// app.activeDocument.documentPreferences.facingPages
 
 		// var templatePage = app.activeWindow.activePage;
-		
+
 		// var templatePage = app.activeDocument.spreads[0];
 		// var xmlTags = app.activeDocument.xmlTags;
 
 		var templateSpread = app.activeWindow.activeSpread;
-		if(templateSpread instanceof MasterSpread){
+		if (templateSpread instanceof MasterSpread) {
 			return;
 		}
 
