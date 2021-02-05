@@ -272,38 +272,39 @@ var App = (function () {
 
 			var pageItem = pageItems[i];
 
-			if (pageItem.isValid) {
+			if (!pageItem.isValid) {
+				continue;
+			}
 
-				var xmlItem = pageItem.associatedXMLElement;
+			var xmlItem = pageItem.associatedXMLElement;
 
-				if (xmlItem && xmlItem.isValid) {
+			if (!xmlItem || !xmlItem.isValid) {
+				continue;
+			}
 
-					var tagName = xmlItem.markupTag.name;
+			var tagName = xmlItem.markupTag.name;
+			var dataValue = getObjectValue(data, tagName);
 
-					var dataValue = getObjectValue(data, tagName);
+			switch (pageItem.reflect.name) {
 
-					switch (pageItem.reflect.name) {
-
-						case 'TextFrame': // text
-							var stringArray = this.getStringArray(dataValue);
-							for (var i = 0; i < stringArray.length; i++) {
-								stringArray[i] = this.ensureLineEndings(stringArray[i]);
-							}
-							pageItem.contents = stringArray.join(', ');
-							break;
-						case 'Rectangle': // images
-						case 'Polygon':
-						case 'Oval':
-							var stringArray = this.getStringArray(dataValue);
-							if (stringArray.length) {
-								var file = this.resolveFile(stringArray[0], this.selectedFile);
-								if (file) {
-									this.tryPlaceFile(pageItem, file);
-								}
-							}
-							break;
+				case 'TextFrame': // text
+					var stringArray = this.getStringArray(dataValue);
+					for (var i = 0; i < stringArray.length; i++) {
+						stringArray[i] = this.ensureLineEndings(stringArray[i]);
 					}
-				}
+					pageItem.contents = stringArray.join(', ');
+					break;
+				case 'Rectangle': // images
+				case 'Polygon':
+				case 'Oval':
+					var stringArray = this.getStringArray(dataValue);
+					if (stringArray.length) {
+						var file = this.resolveFile(stringArray[0], this.selectedFile);
+						if (file) {
+							this.tryPlaceFile(pageItem, file);
+						}
+					}
+					break;
 			}
 		}
 	};
