@@ -15,6 +15,8 @@ var i18n = (function (translation) {
 	};
 
 })({
+	'Yes': { de: 'Ja' },
+	'No': { de: 'Nein' },
 	'File': { de: 'Datei' },
 	'Open': { de: 'Öffnen' },
 	'Reload': { de: 'Aktualisieren' },
@@ -23,5 +25,9 @@ var i18n = (function (translation) {
 	'Options': { de: 'Optionen' },
 	'Start mapping': { de: 'Mapping starten' },
 	'Error': { de: 'Fehler' },
-	'checkbox_template_delete': { en: 'Delete selected spread after mapping', de: 'Ausgewählten Druckbogen nach Mapping löschen' }
+	'checkbox_template_delete': { en: 'Delete selected spread after mapping', de: 'Ausgewählten Druckbogen nach Mapping löschen' },
+	'Convert line endings': { de: 'Zeilenenden konvertieren' },
+	'Contents': { de: 'Inhalt' },
+	'Settings': { de: 'Einstellungen' },
+	'General': { de: 'Allgemein' }
 });

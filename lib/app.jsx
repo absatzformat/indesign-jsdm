@@ -25,6 +25,10 @@ var App = (function () {
 
 		this.progressBar = this.ui.find('progressbar');
 		this.dataView = this.ui.find('data_view');
+		this.logPanel = this.ui.find('log_panel');
+
+		this.endingsNo = this.ui.find('endings_replace_no');
+		this.endingsNewline = this.ui.find('endings_replace_newline');
 
 		this.selectedFile = null;
 		this.selectedData = null;
@@ -87,7 +91,8 @@ var App = (function () {
 	jsdm.prototype.handleError = function (error) {
 
 		// alert(JSON.stringify(error));
-		alert(error.toString(), _('Error'));
+		// alert(error.toString(), _('Error'));
+		this.log(_('Error') + ': ' + error.toString() + '\n');
 	};
 
 	jsdm.prototype.processSelectedFile = function () {
@@ -99,12 +104,16 @@ var App = (function () {
 
 			var file = this.selectedFile;
 
+			this.log('Loading file ' + file.name + '...');
+
 			file.open('r');
 			file.seek(0);
 
 			var bytes = file.read();
 
 			file.close();
+
+			this.log(' ' + bytes.length + ' bytes\n');
 
 			try {
 				this.data = JSON.parse(bytes);
@@ -162,10 +171,7 @@ var App = (function () {
 			}
 		}
 		else {
-			var value = '' + object;
-			if (value.length > 20) {
-				value = value.substr(0, 20) + '...';
-			}
+			var value = this.truncateString('' + object, 20);
 			var item = node.add('item', name + ': ' + value);
 			item.enabled = false;
 		}
@@ -220,6 +226,20 @@ var App = (function () {
 			templateSpread.pages.add();
 		}
 
+		// TODO: option to override master page items
+
+		// for (var i = 0; i < templateSpread.pages.length; i++) {
+		// 	var page = templateSpread.pages[i];
+		// 	if(page.appliedMaster instanceof MasterSpread){
+		// 		try{
+		// 			page.appliedMaster.pageItems.everyItem().override(page);
+		// 			page.pageItems.everyItem().detach();
+		// 		}catch(err){
+
+		// 		}
+		// 	}
+		// }
+
 		var currentSpread = templateSpread;
 
 		for (var i = 0; i < data.length; i++) {
@@ -266,6 +286,9 @@ var App = (function () {
 
 						case 'TextFrame': // text
 							var stringArray = this.getStringArray(dataValue);
+							for (var i = 0; i < stringArray.length; i++) {
+								stringArray[i] = this.ensureLineEndings(stringArray[i]);
+							}
 							pageItem.contents = stringArray.join(', ');
 							break;
 						case 'Rectangle': // images
@@ -283,6 +306,27 @@ var App = (function () {
 				}
 			}
 		}
+	};
+
+	jsdm.prototype.ensureLineEndings = function (str) {
+
+		if (this.endingsNo.value === false) {
+			var replace = '\r';
+			if (this.endingsNewline.value === true) {
+				replace = '\n';
+			}
+			str = str.replace(/\r?\n/g, replace);
+		}
+
+		return str;
+	};
+
+	jsdm.prototype.truncateString = function (str, length, elip) {
+
+		if (str.length > length) {
+			str = str.substr(0, length) + (typeOf(elip) === 'string' ? elip : '...');
+		}
+		return str;
 	};
 
 	jsdm.prototype.getStringArray = function (object) {
@@ -332,6 +376,10 @@ var App = (function () {
 		}
 
 		return null;
+	};
+
+	jsdm.prototype.log = function (str) {
+		this.logPanel.text += str;
 	};
 
 	return jsdm;

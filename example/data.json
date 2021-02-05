@@ -15,7 +15,8 @@
 		{
 			"id": 2,
 			"title": "Lions",
-			"image": "./images/photo-4577836.jpeg"
+			"image": "./images/photo-4577836.jpeg",
+			"description": "This is a longer text with a line break\r\nThe second line goes here."
 		}
 	]
 }
