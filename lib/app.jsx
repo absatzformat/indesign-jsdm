@@ -339,15 +339,20 @@ var App = (function () {
 		var strings = [];
 		var type = typeOf(object);
 
-		if (type === 'string') {
-			strings.push(object);
-		}
-		else if (type === 'array') {
-			for (var i = 0; i < object.length; i++) {
-				if (typeOf(object[i]) === 'string') {
-					strings.push(object[i]);
+		switch(type){
+			case 'object':
+				this.log(_('Error') + ': Trying to get string from Object');
+				break;
+			case 'array':
+				for (var i = 0; i < object.length; i++) {
+					var subType = typeOf(object[i]);
+					if (subType === 'string' || subType === 'number') {
+						strings.push('' + object[i]);
+					}
 				}
-			}
+				break;
+			default:
+				strings.push('' + object);
 		}
 
 		return strings;
