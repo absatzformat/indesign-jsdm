@@ -285,12 +285,16 @@ var App = (function () {
 			var tagName = xmlItem.markupTag.name;
 			var dataValue = getObjectValue(data, tagName);
 
+			if (dataValue === undefined) {
+				continue;
+			}
+
 			switch (pageItem.reflect.name) {
 
 				case 'TextFrame': // text
 					var stringArray = this.getStringArray(dataValue);
-					for (var i = 0; i < stringArray.length; i++) {
-						stringArray[i] = this.ensureLineEndings(stringArray[i]);
+					for (var j = 0; j < stringArray.length; j++) {
+						stringArray[j] = this.ensureLineEndings(stringArray[j]);
 					}
 					pageItem.contents = stringArray.join(', ');
 					break;
