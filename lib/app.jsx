@@ -339,7 +339,7 @@ var App = (function () {
 		var strings = [];
 		var type = typeOf(object);
 
-		switch(type){
+		switch (type) {
 			case 'object':
 				this.log(_('Error') + ': Trying to get string from Object');
 				break;
