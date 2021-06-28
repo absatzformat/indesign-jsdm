@@ -15,7 +15,7 @@
 
 	var dir = decodeURI(File($.fileName).path);
 
-	if (File(dir + '/.dev').exists || !context.JSDM) {
+	if (!context.JSDM || File(dir + '/.dev').exists) {
 		context.JSDM = new App();
 	}
 
