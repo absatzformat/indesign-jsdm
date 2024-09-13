@@ -1,22 +1,22 @@
 {
-	"name": "Data Mapper Example",
-	"version": 1.0,
-	"items": [
-		{
-			"id": 1,
-			"title": "Elephants",
-			"image": "./images/photo-4577544.jpeg",
-			"categories": [
-				"africa",
-				"animals",
-				"savannah"
-			]
-		},
-		{
-			"id": 2,
-			"title": "Lions",
-			"image": "./images/photo-4577836.jpeg",
-			"description": "This is a longer text with a line break\r\nThe second line goes here."
-		}
-	]
+  "name": "Data Mapper Example",
+  "version": 1.0,
+  "items": [
+    {
+      "id": 1,
+      "title": "Elephants",
+      "image": "./images/photo-4577544.jpeg",
+      "categories": [
+        "africa",
+        "animals",
+        "savannah"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Lions",
+      "image": "./images/photo-4577836.jpeg",
+      "description": "This is a longer text with a line break\r\nThe second line goes here."
+    }
+  ]
 }

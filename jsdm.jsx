@@ -9,16 +9,16 @@
 
 (function (context) {
 
-	//@include "lib/i18n.jsx"
-	//@include "lib/ui.jsx"
-	//@include "lib/app.jsx"
+  //@include "lib/i18n.jsx"
+  //@include "lib/ui.jsx"
+  //@include "lib/app.jsx"
 
-	var dir = decodeURI(File($.fileName).path);
+  var dir = decodeURI(File($.fileName).path);
 
-	if (!context.JSDM || File(dir + '/.dev').exists) {
-		context.JSDM = new App();
-	}
+  if (!context.JSDM || File(dir + '/.dev').exists) {
+    context.JSDM = new App();
+  }
 
-	context.JSDM.init();
+  context.JSDM.init();
 
 })(this);
